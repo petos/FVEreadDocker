@@ -1,5 +1,6 @@
+VERSION ?= latest
 .DEFAULT_GOAL := build
-IMAGE ?= fveread:latest
+IMAGE ?= fveread:$(VERSION)
 
 DOCKER_RUN_OPTS ?= --volume ./conf:/opt/fve/config -v ./conf/FVErc:/etc/FVErc -v ./data/:/opt/fve/data -p8000:80 -p 8001:443
 #-v ./conf/lighttpd.conf:/etc/lighttpd/lighttpd.conf
@@ -31,3 +32,14 @@ cb:
 cbd:
 	make cb
 	make debug
+
+publish:
+	@VERSION=$$(date +%Y%m%d%H); \
+	for TAG in $$VERSION latest; do \
+		echo ">>> Building and pushing tag $$TAG..."; \
+		IMAGE=fveread:$$TAG; \
+		make cleanup; \
+		make build VERSION=$$TAG; \
+		docker tag $$IMAGE petoss/$$IMAGE; \
+		docker push petoss/$$IMAGE; \
+	done

@@ -1,45 +1,38 @@
-FROM ubuntu
+FROM debian:bullseye-slim
 
-# Labels definition
 LABEL maintainer="petos@petos.eu"
 LABEL description="Simple FVE toolkit"
-LABEL version=1.0
+LABEL version="1.0"
 
-# Add important components to the base image
-
+# Instalace nezbytných nástrojů, minimalizace image
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
-    jq \
-    curl \
     bc \
-    vim \
-    python3  \
     ca-certificates \
+    curl \
+    jq \
     libnss-wrapper \
- && rm -rf /var/lib/apt/lists/* 
+    python3 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN userdel -r ubuntu || true
-EXPOSE 80
-EXPOSE 443
+# Smazání zbytečného uživatele (jen pokud existuje)
+RUN userdel -r ubuntu 2>/dev/null || true
 
+# Vytvoření adresářů a stažení FVE skriptů
+RUN mkdir -p /opt/fve/{data,config,scripts,api}
 
-## Setup the actual FVE tooling
-WORKDIR /opt/fve/data
-WORKDIR /opt/fve/config
-WORKDIR /opt/fve/scripts
+WORKDIR /opt/fve
 
+# Pokud je repo veřejné, ADD není ideální (kvůli cache), ale ok pro jednoduchost:
 ADD https://github.com/petos/FVEread.git /opt/fve/scripts
+
 COPY entrypoint.sh /opt/fve/entrypoint.sh
+RUN chmod +x /opt/fve/entrypoint.sh \
+ && chmod -R a+rwX /opt/fve \
+ && touch /etc/tellstick.conf && chmod a+r /etc/tellstick.conf \
+ && rm -rf /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale/* /usr/share/zoneinfo/*
 
-#RUN chown -R fve:fve /opt/fve/
-RUN chmod +x /opt/fve/entrypoint.sh && \
-#    mkdir -m 0777 -p /opt/fve/api && \
-    chmod o+rwx /opt/fve&& \
-    touch /etc/tellstick.conf && \
-    chmod a+r /etc/tellstick.conf && \
-    chmod a+rwx /opt/fve/scripts/*
-
+EXPOSE 80 443
 
 ENTRYPOINT ["/opt/fve/entrypoint.sh"]
 CMD ["FVEloop"]
-
