@@ -34,7 +34,7 @@ cbd:
 	make debug
 
 publish:
-	@VERSION=$$(date +%Y%m%d%H); \
+	@VERSION=$$(date +%Y%m%d%H%M); \
 	for TAG in $$VERSION latest; do \
 		echo ">>> Building and pushing tag $$TAG..."; \
 		IMAGE=fveread:$$TAG; \
