@@ -30,7 +30,7 @@ COPY entrypoint.sh /opt/fve/entrypoint.sh
 RUN chmod +x /opt/fve/entrypoint.sh \
  && chmod -R a+rwX /opt/fve \
  && touch /etc/tellstick.conf && chmod a+r /etc/tellstick.conf \
- && rm -rf /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale/* /usr/share/zoneinfo/*
+ && rm -rf /usr/share/doc /usr/share/man /usr/share/info /usr/share/locale/* 
 
 EXPOSE 80 443
 
