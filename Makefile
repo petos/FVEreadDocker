@@ -2,14 +2,18 @@ VERSION ?= latest
 .DEFAULT_GOAL := build
 IMAGE ?= fveread:$(VERSION)
 
-DOCKER_RUN_OPTS ?= --volume ./conf:/opt/fve/config -v ./conf/FVErc:/etc/FVErc -v ./data/:/opt/fve/data -p8000:80 -p 8001:443
-#-v ./conf/lighttpd.conf:/etc/lighttpd/lighttpd.conf
+DOCKER_RUN_OPTS ?= --volume ./conf:/opt/fve/config
+# -p8000:80 -p 8001:443
+# -v ./conf/lighttpd.conf:/etc/lighttpd/lighttpd.conf
 
 UID ?= $(shell id -u)
 GID ?= $(shell id -g)
 
 
-build: Dockerfile
+build: 
+	rm -fr ./scripts/*
+	cp -r ../pyFVE/FVctl ./scripts/FVctl.py
+	python -m py_compile ./scripts/*.py
 	docker buildx build  --no-cache . -t $(IMAGE)
 
 debug:
@@ -24,6 +28,8 @@ run:
 cleanup:
 	$(eval CONTAINERS=$(shell docker container ls -aq))
 	docker container rm $(CONTAINERS)
+deepclean:
+	docker system prune --all --force
 
 cb:
 	-make cleanup
