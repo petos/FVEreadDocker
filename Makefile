@@ -12,7 +12,7 @@ GID ?= $(shell id -g)
 
 build: 
 	rm -fr ./scripts/*
-	cp -r ../pyFVE/FVctl ./scripts/FVctl.py
+	cp -r ../pyFVE/FVctl.py ./scripts/FVctl.py
 	python -m py_compile ./scripts/*.py
 	docker buildx build  --no-cache . -t $(IMAGE)
 
