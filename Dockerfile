@@ -26,9 +26,8 @@ RUN mkdir -p /opt/fve/config && mkdir -p /opt/fve/scripts && mkdir -p /opt/fve/a
 WORKDIR /opt/fve
 
 # Pokud je repo veřejné, ADD není ideální (kvůli cache), ale ok pro jednoduchost:
-#ADD https://github.com/petos/pyFVE.git /opt/fve/scripts
-
-COPY scripts/ /opt/fve/scripts/
+ADD https://github.com/petos/pyFVE.git /opt/fve/scripts
+#COPY scripts/ /opt/fve/scripts/
 
 COPY entrypoint.sh /opt/fve/entrypoint.sh
 RUN chmod +x /opt/fve/entrypoint.sh \

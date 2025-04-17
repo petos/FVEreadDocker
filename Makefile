@@ -11,17 +11,16 @@ GID ?= $(shell id -g)
 
 
 build: 
-	rm -fr ./scripts/*
-	cp -r ../pyFVE/FVctl.py ./scripts/FVctl.py
-	python -m py_compile ./scripts/*.py
+#	rm -fr ./scripts/*
+#	cp -r ../pyFVE/FVctl.py ./scripts/FVctl.py
+#	python -m py_compile ./scripts/*.py
 	docker buildx build  --no-cache . -t $(IMAGE)
 
 debug:
 	docker run $(DOCKER_RUN_OPTS) -it -u $(UID):$(GID) $(IMAGE)
 
 run:
-	$(eval PWD=$(shell pwd))
-	docker run $(DOCKER_RUN_OPTS) -u $(UID):$(GID) $(IMAGE)
+	docker run $(DOCKER_RUN_OPTS) -d -u $(UID):$(GID) $(IMAGE)
 
 # Removes all the running containers
 # TODO: this should only target $IMAGE instances
