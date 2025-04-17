@@ -23,7 +23,4 @@ export LD_PRELOAD=libnss_wrapper.so
 export PATH=$PATH:/opt/fve/scripts/
 # Spusť jako 'fve' (fiktivní jméno)
 
-while ( true ); do
-  python3 /opt/fve/scripts/FVctl.py
-  sleep 10
-done
+python3 /opt/fve/scripts/FVctl.py
