@@ -9,9 +9,11 @@ GID ?= $(shell id -g)
 
 
 build: 
+	make updatelocalfiles
 	docker buildx build  --no-cache . -t $(IMAGE)
 
 publishbuild: 
+	make updatelocalfiles
 	docker buildx build --build-arg PUBLISH=true --no-cache . -t $(IMAGE)
 
 debug:
@@ -39,7 +41,6 @@ updatelocalfiles:
 
 cb:
 	make cleanup
-	make updatelocalfiles
 	make build
 
 cbd:
