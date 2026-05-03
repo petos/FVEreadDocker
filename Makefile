@@ -6,7 +6,7 @@ DOCKER_RUN_OPTS ?= --volume ./conf:/opt/fve/config
 
 UID ?= $(shell id -u)
 GID ?= $(shell id -g)
-
+UIDGID := -u $(UID):$(GID)
 
 build: 
 	make updatelocalfiles
@@ -14,16 +14,16 @@ build:
 
 publishbuild: 
 	make updatelocalfiles
-	docker buildx build --build-arg PUBLISH=true --no-cache . -t $(IMAGE)
+	docker buildx build --provenance=true --sbom=true --build-arg PUBLISH=true --no-cache . -t $(IMAGE)
 
 debug:
-	docker run $(DOCKER_RUN_OPTS) -it -u $(UID):$(GID) $(IMAGE)
+	docker run $(DOCKER_RUN_OPTS) -it $(UIDGID) $(IMAGE)
 
 bash:
-	docker run $(DOCKER_RUN_OPTS) -it -u $(UID):$(GID) --entrypoint /bin/bash $(IMAGE) 
+	docker run $(DOCKER_RUN_OPTS) -it $(UIDGID) --entrypoint /bin/bash $(IMAGE) 
 
 run:
-	docker run $(DOCKER_RUN_OPTS) -d -u $(UID):$(GID) $(IMAGE)
+	docker run $(DOCKER_RUN_OPTS) -d $(UIDGID) $(IMAGE)
 
 # Removes all the running containers
 # TODO: this should only target $IMAGE instances

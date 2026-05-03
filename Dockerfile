@@ -1,8 +1,8 @@
 FROM alpine:latest
 
-LABEL maintainer="petos@petos.eu"
+LABEL maintainer="https://github.com/petos/FVEreadDocker/issues"
 LABEL description="Simple FVE toolkit"
-LABEL version="2.0"
+LABEL version="3.0"
 
 # Instalace nezbytných nástrojů, minimalizace image
 RUN apk add --no-cache \
@@ -15,9 +15,10 @@ RUN apk add --no-cache \
 && update-ca-certificates
 
 # Vytvoření adresářů a stažení FVE skriptů
-RUN mkdir -p /opt/fve/config && mkdir -p /opt/fve/scripts
+RUN mkdir -p /opt/fve/config && mkdir -p /opt/fve/scripts && addgroup -S fvegroup && adduser -S fveuser -G fvegroup
 
 WORKDIR /opt/fve
+VOLUME /opt/fve/config
 
 # Pokud je repo veřejné, ADD není ideální (kvůli cache), ale ok pro jednoduchost:
 #ADD https://github.com/petos/pyFVE.git /opt/fve/scripts
@@ -38,4 +39,5 @@ COPY entrypoint.sh /opt/fve/entrypoint.sh
 RUN chmod +x /opt/fve/entrypoint.sh \
  && chmod -R a+rwX /opt/fve
 
+USER fveuser
 ENTRYPOINT ["/opt/fve/entrypoint.sh"]
